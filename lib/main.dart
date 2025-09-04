@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'components/bottom_bar.dart';
+import 'screens/home_page.dart';
+import 'screens/play_page.dart';
+import 'screens/account_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,30 +15,29 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Guitar App',
+      title: 'Freatboard memorizer',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const HomePage(),
+      home: const MainPage(),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
-  // List of screens for each tab
   static const List<Widget> _pages = <Widget>[
-    Center(child: Text('Home Screen', style: TextStyle(fontSize: 24))),
-    Center(child: Text('Tuner Screen', style: TextStyle(fontSize: 24))),
-    Center(child: Text('Practice Screen', style: TextStyle(fontSize: 24))),
+    HomePage(),
+    PlayPage(),
+    AccountPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -47,23 +50,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
+      bottomNavigationBar: BottomBar(
+        selectedIndex: _selectedIndex,
         onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.music_note),
-            label: 'Tuner',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'Practice',
-          ),
-        ],
       ),
     );
   }
