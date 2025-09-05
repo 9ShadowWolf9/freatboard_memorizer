@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'components/bottom_bar.dart';
 import 'screens/home_page.dart';
-import 'screens/play_page.dart';
+import 'screens/tuner_page.dart';
 import 'screens/account_page.dart';
 
 void main() {
@@ -36,7 +36,7 @@ class _MainPageState extends State<MainPage> {
 
   static const List<Widget> _pages = <Widget>[
     HomePage(),
-    PlayPage(),
+    TunerPage(),
     AccountPage(),
   ];
 

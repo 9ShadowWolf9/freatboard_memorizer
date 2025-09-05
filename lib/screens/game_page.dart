@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import '../models/note.dart';
 
-class PlayPage extends StatefulWidget {
-  const PlayPage({super.key});
+class GamePage extends StatefulWidget {
+  const GamePage({super.key});
 
   @override
-  State<PlayPage> createState() => _PlayPageState();
+  State<GamePage> createState() => _GamePageState();
 }
 
-class _PlayPageState extends State<PlayPage> {
+class _GamePageState extends State<GamePage> {
   List<Note> notes = [];
 
   void startGame() {

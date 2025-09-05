@@ -21,8 +21,8 @@ class BottomBar extends StatelessWidget {
           label: 'Home',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.music_note),
-          label: 'Play',
+          icon: Icon(Icons.tune),
+          label: 'Tuner',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.account_circle),
