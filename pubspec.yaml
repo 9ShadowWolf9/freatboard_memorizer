@@ -20,6 +20,7 @@ version: 1.0.0+1
 
 environment:
   sdk: ^3.7.2
+  flutter: "3.13.9"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -39,7 +40,7 @@ dependencies:
   pitchupdart: ^0.0.6
   path_provider: ^2.1.5
   record_linux: ^1.2.1
-  flutter_fft: ^1.0.2+6
+  flutter_audio_capture: ^1.1.11
 dev_dependencies:
   flutter_test:
     sdk: flutter
