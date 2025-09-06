@@ -29,7 +29,6 @@ class _GamePageState extends State<GamePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Guitar Note Game")),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
