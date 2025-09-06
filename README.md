@@ -1,6 +1,6 @@
 # freatboard_memorizer
 
-Game to help you memorize whole freatboard
+Game to help you memorize whole guitar freatboard
 
 ## Getting Started
 
