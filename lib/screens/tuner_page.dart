@@ -34,7 +34,7 @@ class _TunerPageState extends State<TunerPage> {
     final status = await Permission.microphone.request();
     if (!status.isGranted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Brak dostępu do mikrofonu')),
+        const SnackBar(content: Text('Microphone access denied')),
       );
       return;
     }
@@ -146,7 +146,7 @@ class _TunerPageState extends State<TunerPage> {
 
               /// Cents deviation
               Text(
-                'Odchylenie: ${_cents.toStringAsFixed(1)} cent',
+                'Deviation: ${_cents.toStringAsFixed(1)} cents',
                 style: const TextStyle(
                   fontSize: 20,
                   color: Colors.black54,
@@ -178,7 +178,7 @@ class _TunerPageState extends State<TunerPage> {
 
               /// Status
               Text(
-                inTune ? '🎵 Idealnie!' : '👉 Strojenie...',
+                inTune ? '🎵 Perfect!' : '👉 Tuning...',
                 style: const TextStyle(
                   fontSize: 20,
                   color: Colors.black87,
