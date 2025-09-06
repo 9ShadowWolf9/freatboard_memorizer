@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_audio_capture/flutter_audio_capture.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../models/note_recognition.dart';
-import '../components/pitch_indicator.dart';
 
 class TunerPage extends StatefulWidget {
   const TunerPage({super.key});
@@ -50,8 +49,8 @@ class _TunerPageState extends State<TunerPage> {
 
     await _audioCapture.start(
           (Float32List floatData) {
-        // Ignore quiet signals
-        final amplitude = floatData.map((e) => e.abs()).reduce((a, b) => a > b ? a : b);
+        final amplitude =
+        floatData.map((e) => e.abs()).reduce((a, b) => a > b ? a : b);
         if (amplitude < 0.05) return;
 
         if (floatData.length >= 2048) {
@@ -88,37 +87,107 @@ class _TunerPageState extends State<TunerPage> {
   @override
   Widget build(BuildContext context) {
     final bool inTune = _cents.abs() < 7;
+
+    /// Arrow colors depending on cents
+    final leftArrowColor = _cents < -7 ? Colors.blue : Colors.blue.shade200;
+    final rightArrowColor = _cents > 7 ? Colors.blue : Colors.blue.shade200;
+
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: Center(
-                child: CustomPaint(
-                  size: const Size(200, 200),
-                  painter: PitchIndicatorPainter(_cents, _note),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              /// Arrows + Note
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "‹",
+                    style: TextStyle(
+                      fontSize: 80,
+                      color: leftArrowColor,
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  Text(
+                    _note,
+                    style: const TextStyle(
+                      fontSize: 120,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  Text(
+                    "›",
+                    style: TextStyle(
+                      fontSize: 80,
+                      color: rightArrowColor,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 30),
+
+              /// Frequency
+              Text(
+                '${_freq.toStringAsFixed(1)} Hz',
+                style: const TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Text('${_freq.toStringAsFixed(1)} Hz', style: const TextStyle(fontSize: 20)),
-            const SizedBox(height: 8),
-            Text('Odchylenie: ${_cents.toStringAsFixed(1)} cent', style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _listening ? _stop : _start,
-              child: Text(_listening ? 'Stop' : 'Start'),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              inTune ? 'Dobrze nastrojone!' : 'Dostrój strunę',
-              style: TextStyle(color: inTune ? Colors.green : Colors.orange),
-            ),
-          ],
+
+              const SizedBox(height: 10),
+
+              /// Cents deviation
+              Text(
+                'Odchylenie: ${_cents.toStringAsFixed(1)} cent',
+                style: const TextStyle(
+                  fontSize: 20,
+                  color: Colors.black54,
+                ),
+              ),
+
+              const SizedBox(height: 40),
+
+              /// Start/Stop button
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                  elevation: 5,
+                ),
+                onPressed: _listening ? _stop : _start,
+                child: Text(
+                  _listening ? 'Stop' : 'Start',
+                  style: const TextStyle(fontSize: 22),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              /// Status
+              Text(
+                inTune ? '🎵 Idealnie!' : '👉 Strojenie...',
+                style: const TextStyle(
+                  fontSize: 20,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
-

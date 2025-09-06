@@ -28,33 +28,90 @@ class _GamePageState extends State<GamePage> {
 
   @override
   Widget build(BuildContext context) {
+    final targetNote = _gameLogic.notes.isNotEmpty ? _gameLogic.notes.last : null;
+
     return Scaffold(
-      body: Center(
+      body: SafeArea(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Play the Note!', style: TextStyle(fontSize: 24)),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _gameLogic.isListening ? _gameLogic.stopGame : _gameLogic.startGame,
-              child: Text(_gameLogic.isListening ? 'Stop' : 'Start'),
-            ),
-            const SizedBox(height: 20),
-            if (_gameLogic.notes.isNotEmpty)
-              Text(
-                "Target: ${_gameLogic.notes.last}",
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            // Score bar at the top
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: Row(
+                children: [
+                  const Text(
+                    "Score",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: LinearProgressIndicator(
+                      value: (_gameLogic.score.clamp(0, 10)) / 10,
+                      minHeight: 20,
+                      backgroundColor: Colors.grey[300],
+                      color: Colors.green,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    "${_gameLogic.score}/10",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
-            const SizedBox(height: 20),
+            ),
+
+            const Spacer(),
+
+            // Big target note in the center
+            if (targetNote != null)
+              Column(
+                children: [
+                  Text(
+                    targetNote.noteName,
+                    style: const TextStyle(
+                      fontSize: 80,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    targetNote.stringName, // e.g., "4th string"
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+
+            const Spacer(),
+
+            // Detected note smaller at the bottom
             Text(
               "You played: ${_gameLogic.detectedNote}",
-              style: const TextStyle(fontSize: 20, color: Colors.blue),
+              style: const TextStyle(fontSize: 24, color: Colors.blue),
             ),
-            const SizedBox(height: 20),
-            Text(
-              "Score: ${_gameLogic.score}",
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green),
+
+            const SizedBox(height: 40),
+
+            // Start/Stop button
+            ElevatedButton(
+              onPressed: _gameLogic.isListening
+                  ? _gameLogic.stopGame
+                  : _gameLogic.startGame,
+              style: ElevatedButton.styleFrom(
+                padding:
+                const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
+                textStyle:
+                const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              child: Text(_gameLogic.isListening ? 'Stop' : 'Start'),
             ),
+
+            const SizedBox(height: 40),
           ],
         ),
       ),

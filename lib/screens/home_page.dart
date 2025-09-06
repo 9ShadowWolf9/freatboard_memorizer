@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'game_page.dart'; // renamed
+import 'game_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -7,45 +7,47 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xff7c3aed), Color(0xff3730a3)],
-          ),
-        ),
+      backgroundColor: Colors.white, // match GamePage/TunerPage
+      body: SafeArea(
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.music_note, size: 120, color: Colors.white),
+              // icon
+              const Icon(Icons.music_note, size: 120, color: Colors.blue),
               const SizedBox(height: 24),
+
+              // title
               const Text(
                 'Fretboard Memorizer',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black87,
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 12),
+
+              // subtitle
               const Text(
                 'Train your ears and fingers',
-                style: TextStyle(color: Colors.white70, fontSize: 16),
+                style: TextStyle(color: Colors.black54, fontSize: 16),
               ),
               const SizedBox(height: 48),
+
+              // Start button (blue background, white text)
               ElevatedButton.icon(
                 icon: const Icon(Icons.play_arrow, size: 28),
                 label: const Text('Start Game', style: TextStyle(fontSize: 20)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: const Color(0xff7c3aed),
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
                   padding:
                   const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
+                  elevation: 5,
                 ),
                 onPressed: () {
                   Navigator.push(
