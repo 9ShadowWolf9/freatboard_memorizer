@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import '../models/game_logic.dart';
+import '../screens/game_end.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
@@ -18,6 +19,35 @@ class _GamePageState extends State<GamePage> {
   void initState() {
     super.initState();
 
+    // ---------- Game logic ----------
+    _gameLogic = GameLogic(targetScore: 10);
+
+    _gameLogic.onUpdate = () async {
+      if (!mounted) return;
+      setState(() {});
+
+      final targetNote =
+      _gameLogic.notes.isNotEmpty ? _gameLogic.notes.last : null;
+
+      if (targetNote != null &&
+          _lastSpokenNote != "${targetNote.stringName}${targetNote.noteName}") {
+        _lastSpokenNote = "${targetNote.stringName}${targetNote.noteName}";
+        await _tts.speak(
+            "${targetNote.stringName} string ${targetNote.noteName}");
+      }
+    };
+
+    _gameLogic.onError = () => debugPrint("Audio capture error");
+
+    // 👇 NEW: handle end of game
+    _gameLogic.onGameEnd = () async {
+      await _tts.stop();
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const EndGamePage()),
+      );
+    };
+
     // ---------- TTS setup ----------
     _tts.setLanguage("en-US");
     _tts.setPitch(1.0);
@@ -28,24 +58,6 @@ class _GamePageState extends State<GamePage> {
     _tts.setStartHandler(() => _gameLogic.pauseForTts(true));
     _tts.setCompletionHandler(() => _gameLogic.pauseForTts(false));
     _tts.setCancelHandler(() => _gameLogic.pauseForTts(false));
-
-    // ---------- Game logic ----------
-    _gameLogic = GameLogic();
-
-    _gameLogic.onUpdate = () async {
-      setState(() {});
-
-      final targetNote =
-      _gameLogic.notes.isNotEmpty ? _gameLogic.notes.last : null;
-
-      if (targetNote != null &&
-          _lastSpokenNote != "${targetNote.stringName}${targetNote.noteName}") {
-        _lastSpokenNote = "${targetNote.stringName}${targetNote.noteName}";
-        await _tts.speak("${targetNote.stringName} string ${targetNote.noteName}");
-      }
-    };
-
-    _gameLogic.onError = () => debugPrint("Audio capture error");
   }
 
   @override
@@ -124,8 +136,8 @@ class _GamePageState extends State<GamePage> {
               style: ElevatedButton.styleFrom(
                 padding:
                 const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
-                textStyle:
-                const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                textStyle: const TextStyle(
+                    fontSize: 22, fontWeight: FontWeight.bold),
               ),
               child: Text(_gameLogic.isListening ? 'Stop' : 'Start'),
             ),

@@ -18,12 +18,19 @@ class GameLogic {
   final int sampleRate;
   final int bufferSize;
 
-  GameLogic({this.sampleRate = 44100, this.bufferSize = 4096});
+  final int targetScore; // 👈 win condition
+
+  GameLogic({
+    this.sampleRate = 44100,
+    this.bufferSize = 4096,
+    this.targetScore = 10, // default is 10
+  });
 
   bool get isListening => _listening;
 
   Function()? onUpdate;
   Function()? onError;
+  Function()? onGameEnd; // 👈 NEW callback
 
   /// Start the game and audio capture
   Future<void> startGame() async {
@@ -38,9 +45,12 @@ class GameLogic {
     score = 0;
     _lastFreq = null;
 
-    await _audioCapture.start(_audioCallback,
-            (Object e, StackTrace s) => onError?.call(),
-        sampleRate: sampleRate, bufferSize: bufferSize);
+    await _audioCapture.start(
+      _audioCallback,
+          (Object e, StackTrace s) => onError?.call(),
+      sampleRate: sampleRate,
+      bufferSize: bufferSize,
+    );
 
     _listening = true;
     onUpdate?.call();
@@ -70,8 +80,17 @@ class GameLogic {
     if (notes.isNotEmpty &&
         detectedNoteLetter == notes.last.noteName &&
         cents.abs() < 10) {
-      notes = [Note.random()];
       score += 1;
+
+      if (score >= targetScore) {
+        // ✅ Game over
+        stopGame();
+        onGameEnd?.call();
+        return;
+      }
+
+      // ✅ Only add new note if game not over
+      notes = [Note.random()];
     }
 
     onUpdate?.call();
@@ -97,14 +116,23 @@ class GameLogic {
     if (pause) {
       await _audioCapture.stop();
     } else {
-      await _audioCapture.start(_audioCallback,
-              (Object e, StackTrace s) => onError?.call(),
-          sampleRate: sampleRate,
-          bufferSize: bufferSize);
+      await _audioCapture.start(
+        _audioCallback,
+            (Object e, StackTrace s) => onError?.call(),
+        sampleRate: sampleRate,
+        bufferSize: bufferSize,
+      );
     }
   }
 
   void dispose() {
     stopGame();
+  }
+
+  void resetGame() {
+    score = 0;
+    notes.clear();
+    detectedNote = "";
+    _listening = false;
   }
 }
