@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import '../models/game_logic.dart';
 import '../screens/game_end.dart';
+import '../components/score_bar.dart';
 
 class GamePage extends StatefulWidget {
-  const GamePage({super.key});
+  final int targetScore;
+
+  const GamePage({super.key, this.targetScore = 10});
 
   @override
   State<GamePage> createState() => _GamePageState();
@@ -19,8 +22,8 @@ class _GamePageState extends State<GamePage> {
   void initState() {
     super.initState();
 
-    // ---------- Game logic ----------
-    _gameLogic = GameLogic(targetScore: 10);
+    // Initialize GameLogic with the targetScore from settings
+    _gameLogic = GameLogic(targetScore: widget.targetScore);
 
     _gameLogic.onUpdate = () async {
       if (!mounted) return;
@@ -39,7 +42,6 @@ class _GamePageState extends State<GamePage> {
 
     _gameLogic.onError = () => debugPrint("Audio capture error");
 
-    // 👇 NEW: handle end of game
     _gameLogic.onGameEnd = () async {
       await _tts.stop();
       if (!mounted) return;
@@ -48,13 +50,12 @@ class _GamePageState extends State<GamePage> {
       );
     };
 
-    // ---------- TTS setup ----------
+    // TTS setup
     _tts.setLanguage("en-US");
     _tts.setPitch(1.0);
     _tts.setSpeechRate(0.5);
     _tts.setVoice({"name": "en-us-x-sfg#male_1-local", "locale": "en-US"});
 
-    // Pause/un-pause recorder while TTS speaks
     _tts.setStartHandler(() => _gameLogic.pauseForTts(true));
     _tts.setCompletionHandler(() => _gameLogic.pauseForTts(false));
     _tts.setCancelHandler(() => _gameLogic.pauseForTts(false));
@@ -76,29 +77,8 @@ class _GamePageState extends State<GamePage> {
       body: SafeArea(
         child: Column(
           children: [
-            // Score bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: Row(
-                children: [
-                  const Text("Score",
-                      style:
-                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: LinearProgressIndicator(
-                      value: (_gameLogic.score.clamp(0, 10)) / 10,
-                      minHeight: 20,
-                      backgroundColor: Colors.grey[300],
-                      color: Colors.green,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Text("${_gameLogic.score}/10",
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                ],
-              ),
-            ),
+            // ✅ Score bar
+            ScoreBar(score: _gameLogic.score, maxScore: widget.targetScore),
 
             const Spacer(),
 
@@ -128,7 +108,7 @@ class _GamePageState extends State<GamePage> {
 
             const SizedBox(height: 40),
 
-            // Start / Stop
+            // Start / Stop button
             ElevatedButton(
               onPressed: _gameLogic.isListening
                   ? _gameLogic.stopGame
