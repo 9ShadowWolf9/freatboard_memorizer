@@ -1,12 +1,14 @@
 import 'dart:typed_data';
 import 'package:flutter_audio_capture/flutter_audio_capture.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'note.dart';
 import 'note_recognition.dart';
 
 class GameLogic {
   final FlutterAudioCapture _audioCapture = FlutterAudioCapture();
   final NoteRecognition _noteRecognition = NoteRecognition();
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   List<Note> notes = [];
   String detectedNote = "-";
@@ -58,8 +60,7 @@ class GameLogic {
   void _audioCallback(Float32List floatData) {
     if (floatData.length < 2048) return;
 
-    final amplitude =
-    floatData.map((e) => e.abs()).reduce((a, b) => a > b ? a : b);
+    final amplitude = floatData.map((e) => e.abs()).reduce((a, b) => a > b ? a : b);
     if (amplitude < 0.05) return;
 
     final f = _noteRecognition.detectPitch(floatData);
@@ -77,7 +78,9 @@ class GameLogic {
 
     if (notes.isNotEmpty &&
         detectedNoteLetter == notes.last.noteName &&
-        cents.abs() < 10) {
+        cents.abs() < 20) {
+      // ✅ Correct note
+      _playSound("correct.mp3");
       score += 1;
 
       if (score >= targetScore) {
@@ -87,9 +90,20 @@ class GameLogic {
       }
 
       notes = [Note.random(allowedStrings: allowedStrings)];
+    } else {
+      // ❌ Wrong note
+      _playSound("wrong.mp3");
     }
 
     onUpdate?.call();
+  }
+
+  Future<void> _playSound(String fileName) async {
+    try {
+      await _audioPlayer.play(AssetSource("sounds/$fileName"));
+    } catch (e) {
+      // Ignore errors if sound can't play
+    }
   }
 
   Future<void> stopGame() async {
@@ -120,6 +134,7 @@ class GameLogic {
 
   void dispose() {
     stopGame();
+    _audioPlayer.dispose();
   }
 
   void resetGame() {

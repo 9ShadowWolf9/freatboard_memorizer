@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'game_page.dart';
 
 class EndGamePage extends StatelessWidget {
   const EndGamePage({super.key});
@@ -32,17 +31,11 @@ class EndGamePage extends StatelessWidget {
               // Replay button
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (_) => const GamePage(),
-                    ),
-                  );
+                  Navigator.of(context).pop(); // simply goes back to previous screen
                 },
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 40, vertical: 16),
-                  textStyle: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 child: const Text("Replay"),
               ),
