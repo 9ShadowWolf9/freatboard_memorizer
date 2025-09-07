@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter_audio_capture/flutter_audio_capture.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -17,22 +16,22 @@ class GameLogic {
 
   final int sampleRate;
   final int bufferSize;
-
-  final int targetScore; // 👈 win condition
+  final int targetScore;
+  final List<String> allowedStrings;
 
   GameLogic({
     this.sampleRate = 44100,
     this.bufferSize = 4096,
-    this.targetScore = 10, // default is 10
-  });
+    this.targetScore = 10,
+    List<String>? allowedStrings,
+  }) : allowedStrings = allowedStrings ?? Note.strings;
 
   bool get isListening => _listening;
 
   Function()? onUpdate;
   Function()? onError;
-  Function()? onGameEnd; // 👈 NEW callback
+  Function()? onGameEnd;
 
-  /// Start the game and audio capture
   Future<void> startGame() async {
     final status = await Permission.microphone.request();
     if (!status.isGranted) return;
@@ -41,7 +40,7 @@ class GameLogic {
     final ok = await _audioCapture.init();
     if (ok != true) return;
 
-    notes = [Note.random()];
+    notes = [Note.random(allowedStrings: allowedStrings)];
     score = 0;
     _lastFreq = null;
 
@@ -56,7 +55,6 @@ class GameLogic {
     onUpdate?.call();
   }
 
-  /// Audio processing callback
   void _audioCallback(Float32List floatData) {
     if (floatData.length < 2048) return;
 
@@ -83,20 +81,17 @@ class GameLogic {
       score += 1;
 
       if (score >= targetScore) {
-        // ✅ Game over
         stopGame();
         onGameEnd?.call();
         return;
       }
 
-      // ✅ Only add new note if game not over
-      notes = [Note.random()];
+      notes = [Note.random(allowedStrings: allowedStrings)];
     }
 
     onUpdate?.call();
   }
 
-  /// Stop the game and audio capture
   Future<void> stopGame() async {
     if (!_listening) return;
     await _audioCapture.stop();
@@ -106,9 +101,7 @@ class GameLogic {
     onUpdate?.call();
   }
 
-  /// Pause/un-pause recorder while TTS speaks
   bool _pausedForTts = false;
-
   Future<void> pauseForTts(bool pause) async {
     if (pause == _pausedForTts) return;
     _pausedForTts = pause;
@@ -132,7 +125,7 @@ class GameLogic {
   void resetGame() {
     score = 0;
     notes.clear();
-    detectedNote = "";
+    detectedNote = "-";
     _listening = false;
   }
 }

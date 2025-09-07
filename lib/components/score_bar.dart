@@ -4,11 +4,7 @@ class ScoreBar extends StatelessWidget {
   final int score;
   final int maxScore;
 
-  const ScoreBar({
-    Key? key,
-    required this.score,
-    this.maxScore = 10,
-  }) : super(key: key);
+  const ScoreBar({Key? key, required this.score, this.maxScore = 10}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

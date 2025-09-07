@@ -6,8 +6,9 @@ import '../components/score_bar.dart';
 
 class GamePage extends StatefulWidget {
   final int targetScore;
+  final List<String>? selectedStrings;
 
-  const GamePage({super.key, this.targetScore = 10});
+  const GamePage({super.key, this.targetScore = 10, this.selectedStrings});
 
   @override
   State<GamePage> createState() => _GamePageState();
@@ -22,8 +23,10 @@ class _GamePageState extends State<GamePage> {
   void initState() {
     super.initState();
 
-    // Initialize GameLogic with the targetScore from settings
-    _gameLogic = GameLogic(targetScore: widget.targetScore);
+    _gameLogic = GameLogic(
+      targetScore: widget.targetScore,
+      allowedStrings: widget.selectedStrings ?? [],
+    );
 
     _gameLogic.onUpdate = () async {
       if (!mounted) return;
@@ -50,7 +53,6 @@ class _GamePageState extends State<GamePage> {
       );
     };
 
-    // TTS setup
     _tts.setLanguage("en-US");
     _tts.setPitch(1.0);
     _tts.setSpeechRate(0.5);
@@ -77,12 +79,10 @@ class _GamePageState extends State<GamePage> {
       body: SafeArea(
         child: Column(
           children: [
-            // ✅ Score bar
             ScoreBar(score: _gameLogic.score, maxScore: widget.targetScore),
 
             const Spacer(),
 
-            // Target note
             if (targetNote != null)
               Column(
                 children: [
@@ -102,13 +102,11 @@ class _GamePageState extends State<GamePage> {
 
             const Spacer(),
 
-            // Detected note
             Text("You played: ${_gameLogic.detectedNote}",
                 style: const TextStyle(fontSize: 24, color: Colors.blue)),
 
             const SizedBox(height: 40),
 
-            // Start / Stop button
             ElevatedButton(
               onPressed: _gameLogic.isListening
                   ? _gameLogic.stopGame
