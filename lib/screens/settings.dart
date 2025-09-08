@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-class AccountPage extends StatelessWidget {
-  const AccountPage({super.key});
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
         child: Text(
-          'Account Screen',
+          'Settings Screen',
           style: TextStyle(fontSize: 24),
         ),
       ),
