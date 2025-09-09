@@ -6,8 +6,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Center(
           child: Column(
@@ -15,18 +17,21 @@ class HomePage extends StatelessWidget {
             children: [
               const Icon(Icons.music_note, size: 120, color: Colors.blue),
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 'Fretboard Memorizer',
                 style: TextStyle(
-                  color: Colors.black87,
+                  color: theme.textTheme.bodyLarge?.color,
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 12),
-              const Text(
+              Text(
                 'Train your ears and fingers',
-                style: TextStyle(color: Colors.black54, fontSize: 16),
+                style: TextStyle(
+                  color: theme.textTheme.bodyMedium?.color,
+                  fontSize: 16,
+                ),
               ),
               const SizedBox(height: 48),
               ElevatedButton.icon(
@@ -35,8 +40,7 @@ class HomePage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -45,8 +49,7 @@ class HomePage extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (_) => const GameSettingsPage()),
+                    MaterialPageRoute(builder: (_) => const GameSettingsPage()),
                   );
                 },
               ),

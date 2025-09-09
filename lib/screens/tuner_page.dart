@@ -86,20 +86,21 @@ class _TunerPageState extends State<TunerPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool inTune = _cents.abs() < 7;
+    final theme = Theme.of(context);
+    const blue = Colors.blue;
+    const blue200 = Color(0xFF90CAF9);
 
-    /// Arrow colors depending on cents
-    final leftArrowColor = _cents < -7 ? Colors.blue : Colors.blue.shade200;
-    final rightArrowColor = _cents > 7 ? Colors.blue : Colors.blue.shade200;
+    final bool inTune = _cents.abs() < 7;
+    final leftArrowColor = _cents < -7 ? blue : blue200;
+    final rightArrowColor = _cents > 7 ? blue : blue200;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              /// Arrows + Note
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -116,7 +117,7 @@ class _TunerPageState extends State<TunerPage> {
                     style: const TextStyle(
                       fontSize: 120,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blue,
+                      color: blue,
                     ),
                   ),
                   const SizedBox(width: 20),
@@ -129,36 +130,27 @@ class _TunerPageState extends State<TunerPage> {
                   ),
                 ],
               ),
-
               const SizedBox(height: 30),
-
-              /// Frequency
               Text(
                 '${_freq.toStringAsFixed(1)} Hz',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
-
               const SizedBox(height: 10),
-
-              /// Cents deviation
               Text(
                 'Deviation: ${_cents.toStringAsFixed(1)} cents',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
-                  color: Colors.black54,
+                  color: theme.colorScheme.onSurface.withOpacity(0.70),
                 ),
               ),
-
               const SizedBox(height: 40),
-
-              /// Start/Stop button
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: blue,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50),
@@ -173,15 +165,12 @@ class _TunerPageState extends State<TunerPage> {
                   style: const TextStyle(fontSize: 22),
                 ),
               ),
-
               const SizedBox(height: 20),
-
-              /// Status
               Text(
                 inTune ? '🎵 Perfect!' : '👉 Tuning...',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
-                  color: Colors.black87,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
             ],

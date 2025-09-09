@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
+  final void Function(bool isDark) onThemeChanged;
+
+  const SettingsPage({super.key, required this.onThemeChanged});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
-        child: Text(
-          'Settings Screen',
-          style: TextStyle(fontSize: 24),
+        child: SwitchListTile(
+          title: const Text("Dark Mode"),
+          value: Theme.of(context).brightness == Brightness.dark,
+          onChanged: onThemeChanged,
         ),
       ),
     );
