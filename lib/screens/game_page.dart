@@ -72,10 +72,12 @@ class _GamePageState extends State<GamePage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final targetNote =
     _gameLogic.notes.isNotEmpty ? _gameLogic.notes.last : null;
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -93,10 +95,10 @@ class _GamePageState extends State<GamePage> {
                           color: Colors.blue)),
                   const SizedBox(height: 16),
                   Text(targetNote.stringName,
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black87)),
+                          color: theme.colorScheme.onSurface)),
                 ],
               ),
 

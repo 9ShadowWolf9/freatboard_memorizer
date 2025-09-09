@@ -5,8 +5,10 @@ class EndGamePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Center(
           child: Column(
@@ -22,20 +24,25 @@ class EndGamePage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 "You scored 10/10!",
-                style: TextStyle(fontSize: 22),
+                style: TextStyle(
+                  fontSize: 22,
+                  color: theme.colorScheme.onSurface,
+                ),
               ),
               const SizedBox(height: 40),
 
               // Replay button
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // simply goes back to previous screen
+                  Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                  textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  textStyle: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 child: const Text("Replay"),
               ),
@@ -47,8 +54,8 @@ class EndGamePage extends StatelessWidget {
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 },
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 40, vertical: 16),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                   textStyle: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold),
                 ),
