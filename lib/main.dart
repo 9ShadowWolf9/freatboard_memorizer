@@ -3,6 +3,8 @@ import 'components/bottom_bar.dart';
 import 'screens/home_page.dart';
 import 'screens/tuner_page.dart';
 import 'screens/settings.dart';
+import 'theme/app_theme.dart';
+import 'theme/app_colors.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +18,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  ThemeMode _themeMode = ThemeMode.light; // default light
+  ThemeMode _themeMode = ThemeMode.light;
+  Color _accentColor = AppColors.accentOptions.first;
 
   void _toggleTheme(bool isDark) {
     setState(() {
@@ -24,25 +27,23 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void _changeAccent(Color color) {
+    setState(() {
+      _accentColor = color;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Freatboard memorizer',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-      ),
+      title: 'Fretboard Memorizer',
+      theme: AppTheme.light(_accentColor),
+      darkTheme: AppTheme.dark(_accentColor),
       themeMode: _themeMode,
       home: MainPage(
         onThemeChanged: _toggleTheme,
+        onAccentChanged: _changeAccent,
       ),
     );
   }
@@ -50,8 +51,13 @@ class _MyAppState extends State<MyApp> {
 
 class MainPage extends StatefulWidget {
   final void Function(bool isDark) onThemeChanged;
+  final void Function(Color color) onAccentChanged;
 
-  const MainPage({super.key, required this.onThemeChanged});
+  const MainPage({
+    super.key,
+    required this.onThemeChanged,
+    required this.onAccentChanged,
+  });
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -68,7 +74,10 @@ class _MainPageState extends State<MainPage> {
     _pages = [
       const HomePage(),
       const TunerPage(),
-      SettingsPage(onThemeChanged: widget.onThemeChanged),
+      SettingsPage(
+        onThemeChanged: widget.onThemeChanged,
+        onAccentChanged: widget.onAccentChanged,
+      ),
     ];
   }
 

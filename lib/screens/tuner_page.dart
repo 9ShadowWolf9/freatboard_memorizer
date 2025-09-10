@@ -87,12 +87,11 @@ class _TunerPageState extends State<TunerPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    const blue = Colors.blue;
-    const blue200 = Color(0xFF90CAF9);
+    final accent = theme.colorScheme.primary;
 
     final bool inTune = _cents.abs() < 7;
-    final leftArrowColor = _cents < -7 ? blue : blue200;
-    final rightArrowColor = _cents > 7 ? blue : blue200;
+    final leftArrowColor = _cents < -7 ? accent : accent.withOpacity(0.3);
+    final rightArrowColor = _cents > 7 ? accent : accent.withOpacity(0.3);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -104,30 +103,18 @@ class _TunerPageState extends State<TunerPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    "‹",
-                    style: TextStyle(
-                      fontSize: 80,
-                      color: leftArrowColor,
-                    ),
-                  ),
+                  Text("‹", style: TextStyle(fontSize: 80, color: leftArrowColor)),
                   const SizedBox(width: 20),
                   Text(
                     _note,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 120,
                       fontWeight: FontWeight.bold,
-                      color: blue,
+                      color: accent,
                     ),
                   ),
                   const SizedBox(width: 20),
-                  Text(
-                    "›",
-                    style: TextStyle(
-                      fontSize: 80,
-                      color: rightArrowColor,
-                    ),
-                  ),
+                  Text("›", style: TextStyle(fontSize: 80, color: rightArrowColor)),
                 ],
               ),
               const SizedBox(height: 30),
@@ -150,20 +137,17 @@ class _TunerPageState extends State<TunerPage> {
               const SizedBox(height: 40),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: blue,
+                  backgroundColor: accent,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50),
                   ),
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                   elevation: 5,
                 ),
                 onPressed: _listening ? _stop : _start,
-                child: Text(
-                  _listening ? 'Stop' : 'Start',
-                  style: const TextStyle(fontSize: 22),
-                ),
+                child: Text(_listening ? 'Stop' : 'Start',
+                    style: const TextStyle(fontSize: 22)),
               ),
               const SizedBox(height: 20),
               Text(

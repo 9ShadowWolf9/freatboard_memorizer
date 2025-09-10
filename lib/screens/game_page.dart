@@ -73,8 +73,8 @@ class _GamePageState extends State<GamePage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final targetNote =
-    _gameLogic.notes.isNotEmpty ? _gameLogic.notes.last : null;
+    final accent = theme.colorScheme.primary;
+    final targetNote = _gameLogic.notes.isNotEmpty ? _gameLogic.notes.last : null;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -82,46 +82,47 @@ class _GamePageState extends State<GamePage> {
         child: Column(
           children: [
             ScoreBar(score: _gameLogic.score, maxScore: widget.targetScore),
-
             const Spacer(),
-
             if (targetNote != null)
               Column(
                 children: [
-                  Text(targetNote.noteName,
-                      style: const TextStyle(
-                          fontSize: 80,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue)),
+                  Text(
+                    targetNote.noteName,
+                    style: TextStyle(
+                      fontSize: 80,
+                      fontWeight: FontWeight.bold,
+                      color: accent,
+                    ),
+                  ),
                   const SizedBox(height: 16),
-                  Text(targetNote.stringName,
-                      style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w500,
-                          color: theme.colorScheme.onSurface)),
+                  Text(
+                    targetNote.stringName,
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w500,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
                 ],
               ),
-
             const Spacer(),
-
-            Text("You played: ${_gameLogic.detectedNote}",
-                style: const TextStyle(fontSize: 24, color: Colors.blue)),
-
+            Text(
+              "You played: ${_gameLogic.detectedNote}",
+              style: TextStyle(fontSize: 24, color: accent),
+            ),
             const SizedBox(height: 40),
-
             ElevatedButton(
-              onPressed: _gameLogic.isListening
-                  ? _gameLogic.stopGame
-                  : _gameLogic.startGame,
+              onPressed:
+              _gameLogic.isListening ? _gameLogic.stopGame : _gameLogic.startGame,
               style: ElevatedButton.styleFrom(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
+                backgroundColor: accent,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
                 textStyle: const TextStyle(
                     fontSize: 22, fontWeight: FontWeight.bold),
               ),
               child: Text(_gameLogic.isListening ? 'Stop' : 'Start'),
             ),
-
             const SizedBox(height: 40),
           ],
         ),

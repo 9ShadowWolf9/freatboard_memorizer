@@ -6,6 +6,7 @@ class EndGamePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final accent = theme.colorScheme.primary;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -14,12 +15,12 @@ class EndGamePage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
+              Text(
                 "🎉 Congratulations!",
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                  color: accent,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -32,13 +33,11 @@ class EndGamePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 40),
-
-              // Replay button
               ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
+                onPressed: () => Navigator.of(context).pop(),
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: accent,
+                  foregroundColor: Colors.white,
                   padding:
                   const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                   textStyle: const TextStyle(
@@ -47,13 +46,12 @@ class EndGamePage extends StatelessWidget {
                 child: const Text("Replay"),
               ),
               const SizedBox(height: 20),
-
-              // Home button
               ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                },
+                onPressed: () =>
+                    Navigator.of(context).popUntil((route) => route.isFirst),
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: accent,
+                  foregroundColor: Colors.white,
                   padding:
                   const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                   textStyle: const TextStyle(

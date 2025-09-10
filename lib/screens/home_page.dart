@@ -7,6 +7,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final accent = theme.colorScheme.primary;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -15,7 +16,7 @@ class HomePage extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.music_note, size: 120, color: Colors.blue),
+              Icon(Icons.music_note, size: 120, color: accent),
               const SizedBox(height: 24),
               Text(
                 'Fretboard Memorizer',
@@ -38,7 +39,7 @@ class HomePage extends StatelessWidget {
                 icon: const Icon(Icons.play_arrow, size: 28),
                 label: const Text('Start Game', style: TextStyle(fontSize: 20)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: accent,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                   shape: RoundedRectangleBorder(

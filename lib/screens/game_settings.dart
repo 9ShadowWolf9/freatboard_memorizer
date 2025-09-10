@@ -15,15 +15,25 @@ class _GameSettingsPageState extends State<GameSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final accent = theme.colorScheme.primary;
+
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Game Settings"),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             children: [
-              const Text(
+              Text(
                 "Select number of rounds",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
+                ),
               ),
               const SizedBox(height: 16),
               Slider(
@@ -32,18 +42,26 @@ class _GameSettingsPageState extends State<GameSettingsPage> {
                 max: 30,
                 divisions: 25,
                 label: "$_selectedRounds",
+                activeColor: accent,
                 onChanged: (value) {
                   setState(() => _selectedRounds = value.toInt());
                 },
               ),
               Text(
                 "$_selectedRounds rounds",
-                style: const TextStyle(fontSize: 20),
+                style: TextStyle(
+                  fontSize: 20,
+                  color: theme.colorScheme.onSurface,
+                ),
               ),
               const SizedBox(height: 32),
-              const Text(
+              Text(
                 "Select strings to practice",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
+                ),
               ),
               const SizedBox(height: 16),
               Wrap(
@@ -53,6 +71,8 @@ class _GameSettingsPageState extends State<GameSettingsPage> {
                   return FilterChip(
                     label: Text(string),
                     selected: selected,
+                    selectedColor: accent.withOpacity(0.2),
+                    checkmarkColor: accent,
                     onSelected: (val) {
                       setState(() {
                         if (val) {
@@ -81,10 +101,10 @@ class _GameSettingsPageState extends State<GameSettingsPage> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: accent,
                   foregroundColor: Colors.white,
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 40, vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
