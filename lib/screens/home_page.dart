@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'game_settings.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  final void Function(bool) onThemeChanged;
+  final void Function(Color) onAccentChanged;
+
+  const HomePage({
+    super.key,
+    required this.onThemeChanged,
+    required this.onAccentChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +44,17 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 48),
               ElevatedButton.icon(
                 icon: const Icon(Icons.play_arrow, size: 28),
-                label: const Text('Start Game', style: TextStyle(fontSize: 20)),
+                label: const Text(
+                  'Start Game',
+                  style: TextStyle(fontSize: 20),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: accent,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -50,7 +63,9 @@ class HomePage extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const GameSettingsPage()),
+                    MaterialPageRoute(
+                      builder: (_) => const GameSettingsPage(),
+                    ),
                   );
                 },
               ),
