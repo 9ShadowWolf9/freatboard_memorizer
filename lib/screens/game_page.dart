@@ -49,7 +49,12 @@ class _GamePageState extends State<GamePage> {
       await _tts.stop();
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const EndGamePage()),
+        MaterialPageRoute(
+          builder: (_) => EndGamePage(
+            finalScore: _gameLogic.score,
+            maxScore: widget.targetScore,
+          ),
+        ),
       );
     };
 
@@ -74,7 +79,8 @@ class _GamePageState extends State<GamePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final accent = theme.colorScheme.primary;
-    final targetNote = _gameLogic.notes.isNotEmpty ? _gameLogic.notes.last : null;
+    final targetNote =
+    _gameLogic.notes.isNotEmpty ? _gameLogic.notes.last : null;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -112,14 +118,16 @@ class _GamePageState extends State<GamePage> {
             ),
             const SizedBox(height: 40),
             ElevatedButton(
-              onPressed:
-              _gameLogic.isListening ? _gameLogic.stopGame : _gameLogic.startGame,
+              onPressed: _gameLogic.isListening
+                  ? _gameLogic.stopGame
+                  : _gameLogic.startGame,
               style: ElevatedButton.styleFrom(
                 backgroundColor: accent,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
-                textStyle: const TextStyle(
-                    fontSize: 22, fontWeight: FontWeight.bold),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
+                textStyle:
+                const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               child: Text(_gameLogic.isListening ? 'Stop' : 'Start'),
             ),

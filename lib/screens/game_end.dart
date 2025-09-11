@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 class EndGamePage extends StatelessWidget {
-  const EndGamePage({super.key});
+  final int finalScore;
+  final int maxScore;
+
+  const EndGamePage({
+    super.key,
+    required this.finalScore,
+    required this.maxScore,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +33,7 @@ class EndGamePage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                "You scored 10/10!",
+                "You scored $finalScore/$maxScore!",
                 style: TextStyle(
                   fontSize: 22,
                   color: theme.colorScheme.onSurface,
