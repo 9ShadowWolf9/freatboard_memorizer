@@ -48,10 +48,11 @@ Add screenshots of the main game, score bar, tuner, and note detection screens h
 ## Getting Started
 
 1. Clone the repository:
-   git clone https://github.com/yourusername/fretboard-memorizer.git
+   ```bash
+   git clone https://github.com/9ShadowWolf9/freatboard_memorizer.git
    cd fretboard-memorizer
 
-2. Install dependencies:
+3. Install dependencies:
    ```bash
    flutter pub get
 
