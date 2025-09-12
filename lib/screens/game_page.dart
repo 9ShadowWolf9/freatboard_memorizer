@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import '../models/game_logic.dart';
@@ -7,8 +8,14 @@ import '../components/score_bar.dart';
 class GamePage extends StatefulWidget {
   final int targetScore;
   final List<String>? selectedStrings;
+  final int gameDuration; // in seconds
 
-  const GamePage({super.key, this.targetScore = 10, this.selectedStrings});
+  const GamePage({
+    super.key,
+    this.targetScore = 10,
+    this.selectedStrings,
+    this.gameDuration = 60, // default 1 minute
+  });
 
   @override
   State<GamePage> createState() => _GamePageState();
@@ -19,6 +26,9 @@ class _GamePageState extends State<GamePage> {
   final FlutterTts _tts = FlutterTts();
   String? _lastSpokenNote;
 
+  Timer? _timer;
+  int _timeLeft = 0;
+
   @override
   void initState() {
     super.initState();
@@ -27,6 +37,8 @@ class _GamePageState extends State<GamePage> {
       targetScore: widget.targetScore,
       allowedStrings: widget.selectedStrings ?? [],
     );
+
+    _timeLeft = widget.gameDuration;
 
     _gameLogic.onUpdate = () async {
       if (!mounted) return;
@@ -47,6 +59,7 @@ class _GamePageState extends State<GamePage> {
 
     _gameLogic.onGameEnd = () async {
       await _tts.stop();
+      _stopTimer();
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -68,10 +81,29 @@ class _GamePageState extends State<GamePage> {
     _tts.setCancelHandler(() => _gameLogic.pauseForTts(false));
   }
 
+  void _startTimer() {
+    _timer?.cancel();
+    _timeLeft = widget.gameDuration;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_timeLeft > 0) {
+        setState(() => _timeLeft--);
+      } else {
+        timer.cancel();
+        _gameLogic.stopGame();
+        _gameLogic.onGameEnd?.call();
+      }
+    });
+  }
+
+  void _stopTimer() {
+    _timer?.cancel();
+  }
+
   @override
   void dispose() {
     _gameLogic.dispose();
     _tts.stop();
+    _stopTimer();
     super.dispose();
   }
 
@@ -87,7 +119,27 @@ class _GamePageState extends State<GamePage> {
       body: SafeArea(
         child: Column(
           children: [
-            ScoreBar(score: _gameLogic.score, maxScore: widget.targetScore),
+            // Timer + ScoreBar row
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              child: Row(
+                children: [
+                  Text(
+                    "⏱ ${_timeLeft}s",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: accent,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ScoreBar(
+                        score: _gameLogic.score, maxScore: widget.targetScore),
+                  ),
+                ],
+              ),
+            ),
             const Spacer(),
             if (targetNote != null)
               Column(
@@ -118,9 +170,16 @@ class _GamePageState extends State<GamePage> {
             ),
             const SizedBox(height: 40),
             ElevatedButton(
-              onPressed: _gameLogic.isListening
-                  ? _gameLogic.stopGame
-                  : _gameLogic.startGame,
+              onPressed: () {
+                if (_gameLogic.isListening) {
+                  _gameLogic.stopGame();
+                  _stopTimer();
+                } else {
+                  _gameLogic.startGame();
+                  _startTimer();
+                }
+                setState(() {});
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: accent,
                 foregroundColor: Colors.white,
