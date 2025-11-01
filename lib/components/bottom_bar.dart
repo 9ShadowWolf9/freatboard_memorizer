@@ -29,8 +29,8 @@ class BottomBar extends StatelessWidget {
           label: 'Tuner',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
-          label: 'Settings',
+          icon: Icon(Icons.person),
+          label: 'Account',
         ),
       ],
     );

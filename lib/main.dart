@@ -3,6 +3,7 @@ import 'components/bottom_bar.dart';
 import 'screens/home_page.dart';
 import 'screens/tuner_page.dart';
 import 'screens/settings.dart';
+import 'screens/account_page.dart';
 import 'theme/app_theme.dart';
 import 'theme/app_colors.dart';
 import 'components/settings_service.dart';
@@ -106,7 +107,7 @@ class _MainPageState extends State<MainPage> {
         onAccentChanged: widget.onAccentChanged,
       ),
       const TunerPage(),
-      SettingsPage(
+      AccountPage(
         onThemeChanged: widget.onThemeChanged,
         onAccentChanged: widget.onAccentChanged,
       ),
