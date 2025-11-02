@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import '../models/account.dart';
 
-class EndGamePage extends StatelessWidget {
+class EndGamePage extends StatefulWidget {
   final int finalScore;
   final int maxScore;
 
@@ -9,6 +10,24 @@ class EndGamePage extends StatelessWidget {
     required this.finalScore,
     required this.maxScore,
   });
+
+  @override
+  State<EndGamePage> createState() => _EndGamePageState();
+}
+
+class _EndGamePageState extends State<EndGamePage> {
+  late Future<void> _updateStatsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _updateStatsFuture = _updateAccountStats();
+  }
+
+  Future<void> _updateAccountStats() async {
+    final account = await Account.load();
+    account.updateStats(widget.finalScore);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +52,7 @@ class EndGamePage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                "You scored $finalScore/$maxScore!",
+                "You scored ${widget.finalScore}/${widget.maxScore}!",
                 style: TextStyle(
                   fontSize: 22,
                   color: theme.colorScheme.onSurface,

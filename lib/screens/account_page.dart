@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import '../models/account.dart';
 import '../theme/app_colors.dart';
 import 'settings.dart';
+import 'edit_profile_page.dart';
 
 class AccountPage extends StatefulWidget {
   final void Function(bool isDark)? onThemeChanged;
@@ -111,14 +113,23 @@ class _AccountPageState extends State<AccountPage> {
           ),
           child: account.profileImageUrl.isNotEmpty
               ? ClipOval(
-                  child: Image.network(
-                    account.profileImageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => const Icon(
-                      Icons.person,
-                      size: 60,
-                    ),
-                  ),
+                  child: account.profileImageUrl.startsWith('data:image')
+                      ? Image.memory(
+                          base64Decode(account.profileImageUrl.split(',')[1]),
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => const Icon(
+                            Icons.person,
+                            size: 60,
+                          ),
+                        )
+                      : Image.network(
+                          account.profileImageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => const Icon(
+                            Icons.person,
+                            size: 60,
+                          ),
+                        ),
                 )
               : const Icon(
                   Icons.person,
@@ -220,8 +231,22 @@ class _AccountPageState extends State<AccountPage> {
 
   Widget _buildEditProfileButton(ThemeData theme) {
     return ElevatedButton.icon(
-      onPressed: () {
-        // TODO: Implement edit profile
+      onPressed: () async {
+        final account = await _accountFuture;
+        if (!mounted) return;
+        
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EditProfilePage(account: account),
+          ),
+        );
+        
+        if (result == true && mounted) {
+          setState(() {
+            _accountFuture = Account.load();
+          });
+        }
       },
       icon: const Icon(Icons.edit),
       label: const Text('Edit Profile'),
