@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_audio_capture/flutter_audio_capture.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../models/note_recognition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TunerPage extends StatefulWidget {
   const TunerPage({super.key});
@@ -14,15 +15,38 @@ class TunerPage extends StatefulWidget {
 
 class _TunerPageState extends State<TunerPage> {
   final FlutterAudioCapture _audioCapture = FlutterAudioCapture();
-  final NoteRecognition _noteRecognition = NoteRecognition();
+  late NoteRecognition _noteRecognition;
 
   bool _listening = false;
   double _freq = 0.0;
   String _note = '-';
   double _cents = 0.0;
+  double _referenceFrequency = 440.0;
+  List<double> _availableFrequencies = [];
 
   final int sampleRate = 44100;
   final int bufferSize = 4096;
+
+  @override
+  void initState() {
+    super.initState();
+    _availableFrequencies = NoteRecognition.getAvailableFrequencies();
+    _loadReferenceFrequency();
+    _noteRecognition = NoteRecognition(referenceFrequency: _referenceFrequency);
+  }
+
+  Future<void> _loadReferenceFrequency() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _referenceFrequency = prefs.getDouble('reference_frequency') ?? 440.0;
+      _noteRecognition = NoteRecognition(referenceFrequency: _referenceFrequency);
+    });
+  }
+
+  Future<void> _saveReferenceFrequency(double frequency) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('reference_frequency', frequency);
+  }
 
   @override
   void dispose() {
@@ -71,6 +95,44 @@ class _TunerPageState extends State<TunerPage> {
     );
 
     setState(() => _listening = true);
+  }
+
+  void _updateReferenceFrequency(double frequency) {
+    setState(() {
+      _referenceFrequency = frequency;
+      _noteRecognition = NoteRecognition(referenceFrequency: _referenceFrequency);
+      _saveReferenceFrequency(frequency);
+    });
+  }
+
+  Widget _buildFrequencySelector() {
+    return Column(
+      children: [
+        Text(
+          'Reference Frequency: ${_referenceFrequency.toStringAsFixed(1)} Hz',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+        const SizedBox(height: 10),
+        DropdownButton<double>(
+          value: _referenceFrequency,
+          items: _availableFrequencies.map((freq) {
+            return DropdownMenuItem<double>(
+              value: freq,
+              child: Text('${freq.toStringAsFixed(1)} Hz'),
+            );
+          }).toList(),
+          onChanged: (value) {
+            if (value != null) {
+              _updateReferenceFrequency(value);
+            }
+          },
+        ),
+      ],
+    );
   }
 
   Future<void> _stop() async {
@@ -134,7 +196,9 @@ class _TunerPageState extends State<TunerPage> {
                   color: theme.colorScheme.onSurface.withOpacity(0.70),
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
+              _buildFrequencySelector(),
+              const SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: accent,

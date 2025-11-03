@@ -3,15 +3,14 @@ import 'dart:typed_data';
 
 class NoteRecognition {
   final int sampleRate;
+  double referenceFrequency;
 
-  NoteRecognition({this.sampleRate = 44100});
+  NoteRecognition({this.sampleRate = 44100, this.referenceFrequency = 440.0});
 
-  /// Detect pitch using autocorrelation
   double detectPitch(Float32List buffer) {
     final int size = buffer.length;
     final List<double> x = List<double>.filled(size, 0.0);
 
-    // Apply Hann window
     for (int i = 0; i < size; i++) {
       final window = 0.5 * (1 - cos(2 * pi * i / (size - 1)));
       x[i] = buffer[i] * window;
@@ -48,11 +47,10 @@ class NoteRecognition {
     return 0.0;
   }
 
-  /// Convert frequency to musical note
   Map<String, Object> freqToNote(double freq) {
     if (freq <= 0) return {'name': '-', 'cents': 0.0};
 
-    final double noteNumber = 12 * (log(freq / 440.0) / ln2) + 69;
+    final double noteNumber = 12 * (log(freq / referenceFrequency) / ln2) + 69;
     final int rounded = noteNumber.round();
     final double cents = (noteNumber - rounded) * 100.0;
 
@@ -62,5 +60,9 @@ class NoteRecognition {
     final String name = '${names[nameIndex]}$octave';
 
     return {'name': name, 'cents': cents};
+  }
+  
+  static List<double> getAvailableFrequencies() {
+    return [432.0, 434.0, 436.0, 438.0, 440.0, 442.0, 444.0, 446.0];
   }
 }
