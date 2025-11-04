@@ -17,12 +17,12 @@ class SettingsService {
 
   Future<bool> loadThemeMode() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_keyIsDark) ?? false; // default: light
+    return prefs.getBool(_keyIsDark) ?? false;
   }
 
   Future<Color> loadAccent() async {
     final prefs = await SharedPreferences.getInstance();
     final colorValue = prefs.getInt(_keyAccent);
-    return colorValue != null ? Color(colorValue) : Colors.blue; // default
+    return colorValue != null ? Color(colorValue) : Colors.blue;
   }
 }

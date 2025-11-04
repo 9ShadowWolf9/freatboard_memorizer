@@ -16,8 +16,8 @@ class NoteRecognition {
       x[i] = buffer[i] * window;
     }
 
-    final int maxLag = (sampleRate / 82).floor(); // ~E2
-    final int minLag = (sampleRate / 1000).floor(); // ~1kHz
+    final int maxLag = (sampleRate / 82).floor();
+    final int minLag = (sampleRate / 1000).floor();
     final List<double> ac = List<double>.filled(maxLag - minLag + 1, 0.0);
 
     for (int lag = minLag; lag <= maxLag; lag++) {

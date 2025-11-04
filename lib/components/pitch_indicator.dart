@@ -11,7 +11,6 @@ class PitchIndicatorPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = min(size.width / 2 - 16, size.height / 2 - 16);
 
-    // Note text
     final textPainter = TextPainter(
       text: TextSpan(
         text: note,
@@ -29,14 +28,12 @@ class PitchIndicatorPainter extends CustomPainter {
       Offset(center.dx - textPainter.width / 2, center.dy - textPainter.height / 2),
     );
 
-    // Arrows
     final arrowPaint = Paint()
       ..style = PaintingStyle.fill
       ..color = (cents.abs() < 7) ? Colors.green : Colors.red;
 
     const arrowSize = 20.0;
 
-    // Left arrow
     canvas.drawPath(
       Path()
         ..moveTo(center.dx - radius - 10, center.dy)
@@ -46,7 +43,6 @@ class PitchIndicatorPainter extends CustomPainter {
       arrowPaint..color = (cents < -7) ? Colors.red : Colors.white24,
     );
 
-    // Right arrow
     canvas.drawPath(
       Path()
         ..moveTo(center.dx + radius + 10, center.dy)

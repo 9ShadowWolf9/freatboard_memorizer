@@ -19,7 +19,7 @@ class ScoreBar extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            "Score",
+            "Round",
             style: theme.textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.bold,
             ),

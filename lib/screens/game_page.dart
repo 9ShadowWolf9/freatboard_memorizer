@@ -87,7 +87,7 @@ class _GamePageState extends State<GamePage> {
       body: SafeArea(
         child: Column(
           children: [
-            ScoreBar(score: _gameLogic.score, maxScore: widget.targetScore),
+            ScoreBar(score: _gameLogic.round, maxScore: widget.targetScore),
             const Spacer(),
             if (targetNote != null)
               Column(
@@ -108,6 +108,26 @@ class _GamePageState extends State<GamePage> {
                       fontWeight: FontWeight.w500,
                       color: theme.colorScheme.onSurface,
                     ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(3, (i) {
+                      final active = i < _gameLogic.wrongAttempts;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 6),
+                        child: Container(
+                          width: 12,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: active
+                                ? accent
+                                : theme.colorScheme.surfaceVariant,
+                          ),
+                        ),
+                      );
+                    }),
                   ),
                 ],
               ),

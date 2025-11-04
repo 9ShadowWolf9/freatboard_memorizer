@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'components/bottom_bar.dart';
 import 'screens/home_page.dart';
 import 'screens/tuner_page.dart';
@@ -7,7 +8,13 @@ import 'screens/account_page.dart';
 import 'theme/app_theme.dart';
 import 'theme/app_colors.dart';
 import 'components/settings_service.dart';
+
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(const MyApp());
 }
 

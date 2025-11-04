@@ -66,9 +66,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       widget.account.name = _nameController.text.trim();
       widget.account.email = _emailController.text.trim();
       
-      // Handle image if selected
       if (_imageFile != null) {
-        // Convert image to base64 string for storage
         final bytes = await _imageFile!.readAsBytes();
         final base64Image = 'data:image/jpeg;base64,${base64Encode(bytes)}';
         widget.account.profileImageUrl = base64Image;

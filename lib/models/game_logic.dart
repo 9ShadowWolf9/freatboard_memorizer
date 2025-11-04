@@ -14,7 +14,11 @@ class GameLogic {
   String detectedNote = "-";
   bool _listening = false;
   int score = 0;
+  int round = 0;
   double? _lastFreq;
+  int wrongAttempts = 0;
+  int _lastAttemptMs = 0;
+  final int attemptCooldownMs = 800;
 
   final int sampleRate;
   final int bufferSize;
@@ -44,7 +48,10 @@ class GameLogic {
 
     notes = [Note.random(allowedStrings: allowedStrings)];
     score = 0;
+    round = 1;
     _lastFreq = null;
+    wrongAttempts = 0;
+    _lastAttemptMs = 0;
 
     await _audioCapture.start(
       _audioCallback,
@@ -79,20 +86,35 @@ class GameLogic {
     if (notes.isNotEmpty &&
         detectedNoteLetter == notes.last.noteName &&
         cents.abs() < 20) {
-      // ✅ Correct note
       _playSound("correct.mp3");
       score += 1;
-
-      if (score >= targetScore) {
+      wrongAttempts = 0;
+      _lastAttemptMs = 0;
+      if (round >= targetScore) {
         stopGame();
         onGameEnd?.call();
         return;
       }
-
+      round += 1;
       notes = [Note.random(allowedStrings: allowedStrings)];
     } else {
-      // ❌ Wrong note
       _playSound("wrong.mp3");
+      final now = DateTime.now().millisecondsSinceEpoch;
+      if (now - _lastAttemptMs >= attemptCooldownMs) {
+        wrongAttempts += 1;
+        _lastAttemptMs = now;
+        if (wrongAttempts >= 3) {
+          if (round >= targetScore) {
+            stopGame();
+            onGameEnd?.call();
+            return;
+          }
+          round += 1;
+          notes = [Note.random(allowedStrings: allowedStrings)];
+          wrongAttempts = 0;
+          _lastAttemptMs = 0;
+        }
+      }
     }
 
     onUpdate?.call();
@@ -102,7 +124,6 @@ class GameLogic {
     try {
       await _audioPlayer.play(AssetSource("sounds/$fileName"));
     } catch (e) {
-      // Ignore errors if sound can't play
     }
   }
 
@@ -139,6 +160,7 @@ class GameLogic {
 
   void resetGame() {
     score = 0;
+    round = 0;
     notes.clear();
     detectedNote = "-";
     _listening = false;

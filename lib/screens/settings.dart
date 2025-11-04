@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_colors.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -56,6 +57,57 @@ class SettingsPage extends StatelessWidget {
                   ),
                 );
               }).toList(),
+            ),
+            const Spacer(),
+            const Divider(height: 32),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.delete_forever),
+                label: const Text("Reset all data"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () async {
+                  final bool? confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (ctx) {
+                      return AlertDialog(
+                        title: const Text('Reset all data?'),
+                        content: const Text(
+                          'This will clear your profile stats, charts and settings back to defaults. This action cannot be undone.',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(ctx).pop(false),
+                            child: const Text('Cancel'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => Navigator.of(ctx).pop(true),
+                            child: const Text('Reset'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+
+                  if (confirm == true) {
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.clear();
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('All data has been reset')),
+                      );
+                      Navigator.of(context).pop();
+                    }
+                  }
+                },
+              ),
             ),
           ],
         ),

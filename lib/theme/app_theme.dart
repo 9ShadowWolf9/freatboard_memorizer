@@ -10,7 +10,7 @@ class AppTheme {
     return ThemeData(
       brightness: Brightness.light,
       colorScheme: baseScheme.copyWith(
-        primary: accent, // use the exact bright accent
+        primary: accent,
       ),
       useMaterial3: true,
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -36,7 +36,7 @@ class AppTheme {
     return ThemeData(
       brightness: Brightness.dark,
       colorScheme: baseScheme.copyWith(
-        primary: accent, // keep it bright here too
+        primary: accent,
       ),
       useMaterial3: true,
       elevatedButtonTheme: ElevatedButtonThemeData(

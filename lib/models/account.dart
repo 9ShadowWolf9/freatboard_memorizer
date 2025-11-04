@@ -7,6 +7,7 @@ class Account {
   String profileImageUrl;
   int totalScore;
   int gamesPlayed;
+  List<double> averageScoreHistory;
 
   Account({
     this.name = 'Guest User',
@@ -14,7 +15,8 @@ class Account {
     this.profileImageUrl = '',
     this.totalScore = 0,
     this.gamesPlayed = 0,
-  });
+    List<double>? averageScoreHistory,
+  }) : averageScoreHistory = averageScoreHistory ?? <double>[];
 
   factory Account.fromJson(Map<String, dynamic> json) {
     return Account(
@@ -23,6 +25,10 @@ class Account {
       profileImageUrl: json['profileImageUrl'] ?? '',
       totalScore: json['totalScore'] ?? 0,
       gamesPlayed: json['gamesPlayed'] ?? 0,
+      averageScoreHistory: (json['averageScoreHistory'] as List?)
+              ?.map((e) => (e as num).toDouble())
+              .toList() ??
+          <double>[],
     );
   }
 
@@ -33,6 +39,7 @@ class Account {
       'profileImageUrl': profileImageUrl,
       'totalScore': totalScore,
       'gamesPlayed': gamesPlayed,
+      'averageScoreHistory': averageScoreHistory,
     };
   }
 
@@ -59,6 +66,8 @@ class Account {
   void updateStats(int score) {
     totalScore += score;
     gamesPlayed += 1;
+    final double avg = gamesPlayed > 0 ? totalScore / gamesPlayed : 0.0;
+    averageScoreHistory.add(avg);
     save();
   }
 }

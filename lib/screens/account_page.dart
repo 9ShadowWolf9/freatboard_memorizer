@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import '../models/account.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../theme/app_colors.dart';
 import 'settings.dart';
 import 'edit_profile_page.dart';
@@ -47,7 +48,13 @@ class _AccountPageState extends State<AccountPage> {
                     onAccentChanged: widget.onAccentChanged ?? (_) {},
                   ),
                 ),
-              );
+              ).then((_) {
+                if (mounted) {
+                  setState(() {
+                    _accountFuture = Account.load();
+                  });
+                }
+              });
             },
           ),
         ],
@@ -86,6 +93,8 @@ class _AccountPageState extends State<AccountPage> {
                 ),
                 const SizedBox(height: 32),
                 _buildStatsCard(account, theme),
+                const SizedBox(height: 24),
+                _buildAverageChart(account, theme),
                 const SizedBox(height: 24),
                 _buildEditProfileButton(theme),
               ],
@@ -146,7 +155,6 @@ class _AccountPageState extends State<AccountPage> {
               color: Colors.white,
             ),
             onPressed: () {
-              // TODO: Implement image picker
             },
           ),
         ),
@@ -226,6 +234,78 @@ class _AccountPageState extends State<AccountPage> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildAverageChart(Account account, ThemeData theme) {
+    final accent = theme.colorScheme.primary;
+    final data = account.averageScoreHistory;
+    final int n = data.length;
+    final int startIndex = n > 20 ? n - 20 : 0;
+    final List<FlSpot> spots = [
+      for (int i = startIndex; i < n; i++) FlSpot((i + 1).toDouble(), data[i])
+    ];
+
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Avg Score History', style: theme.textTheme.titleLarge),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 220,
+              child: LineChart(
+                LineChartData(
+                  gridData: FlGridData(show: true, drawVerticalLine: false),
+                  titlesData: FlTitlesData(
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+                    ),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: true, interval: 1,
+                        getTitlesWidget: (value, meta) {
+                          final int idx = value.toInt();
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: Text('#$idx', style: theme.textTheme.bodySmall),
+                          );
+                        },
+                      ),
+                    ),
+                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  ),
+                  borderData: FlBorderData(
+                    show: true,
+                    border: Border.all(color: theme.colorScheme.outlineVariant),
+                  ),
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: spots,
+                      isCurved: true,
+                      color: accent,
+                      barWidth: 3,
+                      dotData: FlDotData(show: true),
+                    ),
+                  ],
+                  minY: 0,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              data.isEmpty
+                  ? 'Brak danych — zagraj pierwszą grę!'
+                  : 'Pokazuję ostatnie ${spots.length} gier (łącznie: $n).',
+              style: theme.textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
